@@ -459,6 +459,8 @@ struct ContentView: View {
     @State var rotation: [Double] = [0]
     @State var stocks = [4, 21, 2, 1, 2, 3, 0, 2, 4, 3]
     @State private var myMoney = 0.0
+    @State var returned = true
+
     var rot = Double(Int.random(in: -30..<30))
     var prices = [1, 1, 1, 1, 1.3, 1.1, 1, 1.2, 1, 1.3]
     var colaColor = Color(red: 54 / 255, green: 13 / 255, blue: 29 / 255)
@@ -472,6 +474,8 @@ struct ContentView: View {
     var waterLabelColor = Color(red: 152 / 255, green: 220 / 255, blue: 245 / 255)
     var energyLabelColor = Color(red: 204 / 255, green: 0 / 255, blue: 38 / 255)
     var fantaLabelColor = Color(red: 176 / 255, green: 0 / 255, blue: 98 / 255)
+
+
 
 
     func start() {
@@ -489,7 +493,7 @@ struct ContentView: View {
         var average = 0
 
         if (myMoney >= price) {
-            let b = Int.random(in: 0 ... 4)
+            let b = Int.random(in: 0 ... 30)
             if (b == 1) {
                 self.disaster = true
             }
@@ -497,9 +501,9 @@ struct ContentView: View {
 
             if (self.disaster) {
                 start()
-                self.rotation = [10, 30, 20, -20, 10, 40, 30, 10, 50, 20]
-                self.drinkBought = ["Cola", "Fanta", "Water", "Apple", "Tea", "Water", "Orange", "Water", "Fanta",]
-                self.drinkBought2 = ["a", "Cola", "Fanta", "Water", "Apple", "Tea", "Water", "Orange", "Water", "Fanta",]
+                self.rotation = [10, 30, 20, -20, 10, 40, 30, 10, 50, 20, -40]
+                self.drinkBought = ["Cola", "Fanta", "Water", "Apple", "Tea", "Water", "Orange", "Water", "Fanta", "Apple"]
+                self.drinkBought2 = ["a", "Cola", "Fanta", "Water", "Apple", "Tea", "Water", "Orange", "Water", "Fanta", "Apple"]
             }
             self.stocks[index] = self.stocks[index] - 1
             moneyLeft = myMoney - price
@@ -554,7 +558,7 @@ struct ContentView: View {
                     }
                 } else {
                     Button(action: {
-                        if (self.drinkBought.count < 8) {
+                        if (self.drinkBought.count < 10) {
                             self.myMoney = self.order(myMoney: self.myMoney, price: self.prices[index], drinkName: nameDrink, index: index)
                         }
                     }) {
@@ -572,9 +576,47 @@ struct ContentView: View {
 
     fileprivate func eachDrinkWhenBought(num: Int, drinkName: String, color: Color, labelColor: Color) -> some View {
         return String(self.drinkBought2[num]) == drinkName ?
-        drinkPlastic(capColor: color, drinkColor: color, type: 0, labelColor: labelColor)
-            :
-            drinkPlastic(capColor: color, drinkColor: color, type: 1, labelColor: labelColor)
+            Button(action: {
+                
+                if (num == 1){
+                print(num)
+                               print(self.drinkBought2[num])
+                               print(self.drinkBought[num])
+                               print(self.rotation[num])
+                               self.drinkBought2.remove(at: num)
+                               self.drinkBought.remove(at: 0)
+                               self.rotation.remove(at: num)
+            } else {
+                    do {
+                             print(num)
+                                                         print(self.drinkBought2[num])
+                                                         print(self.drinkBought[num])
+                                                         print(self.rotation[num])
+                                                         self.drinkBought2.remove(at: num)
+                                                         self.drinkBought.remove(at: num)
+                                                         self.rotation.remove(at: num)
+                       } catch {
+                       print(num)
+                                                                                  print(self.drinkBought2[num])
+                                                                                  print(self.drinkBought[num])
+                                                                                  print(self.rotation[num])
+                                                                                  self.drinkBought2.remove(at: num)
+                                                                                  self.drinkBought.remove(at: -1)
+                                                                                  self.rotation.remove(at: num)
+                       }
+               
+                }
+               
+
+            }) {
+                   drinkPlastic(capColor: color, drinkColor: color, type: 0, labelColor: labelColor)
+
+        }
+
+            :Button(action: {}) {
+                           drinkPlastic(capColor: color, drinkColor: color, type: 1, labelColor: labelColor)
+
+        }
 
     }
 
@@ -674,9 +716,9 @@ struct ContentView: View {
 
                     .padding()
 
-                HStack {
+                HStack () {
                     Spacer()
-                    Text("Emergency")
+                    Text("Emergency: get free drinks and Survive")
                         .font(.system(size: 14))
                         .fontWeight(.bold)
                         .foregroundColor(
@@ -686,15 +728,16 @@ struct ContentView: View {
                                 Color(red: 255 / 255, green: 95 / 255, blue: 105 / 255)
                         )
 
-                        .frame(width: 92, height: 18, alignment: .center)
+                        .multilineTextAlignment(.center)
+                        .frame(width: 300, height: 18, alignment: .center)
                         .background(
                             !self.disaster ? Color(red: 248 / 255, green: 234 / 255, blue: 0 / 255).opacity(0.3)
                                 :
                                 Color(red: 248 / 255, green: 234 / 255, blue: 0 / 255)
                         )
                         .cornerRadius(1)
+                    Spacer()
                 }
-                    .padding(.trailing, 21.0)
 
                 Divider()
                 HStack() {
@@ -707,7 +750,7 @@ struct ContentView: View {
                                         .fontWeight(.heavy)
                                         .italic().padding(.bottom, 16.0)
                                         .frame(maxWidth: .infinity, alignment: .center)
-                                    .font(.custom("Rockwell", size: 25)).multilineTextAlignment(.leading))
+                                        .font(.custom("Rockwell", size: 25)).multilineTextAlignment(.leading))
                         }
 
 
@@ -726,21 +769,36 @@ struct ContentView: View {
                     Spacer()
                     VStack(alignment: .trailing) {
                         HStack {
-                            Text(
-                                self.myMoney <= 0 ? "":
-                                    "$\(String(format: "%.1f", self.myMoney))"
-                            )
-                                .font(.system(size: 10))
-                                .fontWeight(.bold)
-                                .foregroundColor(Color.white)
-                                .padding(.bottom, 5.0)
+                            VStack{
+                                Text(
+                                                               self.returned != true ? "Take":
+                                                                   self.myMoney <= 0 ? "":
+                                                                   "$\(String(format: "%.1f", self.myMoney))"
+                                                           )
+                                    
+                                                               .font(.system(size: 10))
+                                                               .fontWeight(.bold)
+                                                               .foregroundColor(Color.white)
+                                                               .padding(.bottom, 5.0)
+                            }  .frame(width: 42, height: 15, alignment: .center)
+                                                              .background(Color.black.opacity(0.3))
+                                                              .cornerRadius(5)
+                                 .padding(.bottom, 6.0)
+                           
                             Button(action: {
+
+                                if (self.myMoney > 0) {
+                                    self.returned = false
+                                }
                                 self.myMoney = 0
+
                             }) {
+
                                 Text("Return")
+                                     .fontWeight(.bold)
                                     .foregroundColor(.black)
-                                    .font(.system(size: 10))
-                                    .frame(width: 42, height: 15, alignment: .center)
+                                    .font(.system(size: 8))
+                                    .frame(width: 34, height: 15, alignment: .center)
                                     .background(Color.yellow.opacity(0.6))
                                     .cornerRadius(5)
                                     .padding(.bottom, 6.0)
@@ -750,7 +808,52 @@ struct ContentView: View {
 
 
                         VStack {
-                            Text("")
+
+                            self.returned != false ? Button(action: {
+                                self.returned = true
+                                  self.myMoney = 0
+                            }) {
+                                ZStack {
+                                    Circle()
+
+                                        .fill(Color(red: 238 / 255, green: 233 / 255, blue: 171 / 255))
+                                        .overlay(
+                                            Circle()
+                                                .stroke(Color.black.opacity(0.2), lineWidth: 3)
+                                        )
+                                        .frame(width: 0, height: 0)
+
+                                    VStack {
+
+                                        Text("")
+                                            .foregroundColor(.black) .padding(.top, 0)
+                                            .font(.custom("Rockwell", size: 0))
+                                    }
+                                }
+                                    .rotation3DEffect(.degrees(30), axis: (x: 1, y: 0, z: 0))
+                            }:
+                                Button(action: {
+                                    self.returned = true
+                                }) {
+                                    ZStack {
+                                        Circle()
+
+                                            .fill(Color(red: 238 / 255, green: 233 / 255, blue: 171 / 255))
+                                            .overlay(
+                                                Circle()
+                                                    .stroke(Color.black.opacity(0.2), lineWidth: 3)
+                                            )
+                                            .frame(width: 40, height: 40)
+
+                                        VStack {
+
+                                            Text("Money")
+                                                .foregroundColor(.black) .padding(.top, 8.0)
+                                                .font(.custom("Rockwell", size: 10))
+                                        }
+                                    }
+                                        .rotation3DEffect(.degrees(30), axis: (x: 1, y: 0, z: 0))
+                            }
                         } .frame(height: 55)
                             .frame(maxWidth: 70)
                             .background(Color.black.opacity(0.6))
@@ -795,116 +898,119 @@ struct ContentView: View {
                     .topLeading)
                 .background(Color.red)
                 .cornerRadius(8)
-            HStack {
-              
 
-                Button(action: {
-                    self.myMoney = self.myMoney + 1.0
-                    print(self.myMoney)
-                }) {
-                     VStack(alignment: .trailing) {
-                                      ZStack{
-                                          Ellipse()
-                                                                                     .fill(Color.black.opacity(0.4)) .frame(height: 15)
-                                                                                     .frame(width: 11)
-                                          .padding(.trailing, 51.0)
-                                                                    .padding(.bottom, 12.0)
-                                          Text("1")
-                                              .foregroundColor(.white)
-                                               .font(.custom("Rockwell", size: 13))
-                                              .fontWeight(.heavy)
-                                                                               .italic()
-                                              .multilineTextAlignment(.leading)
-                                              .padding(.trailing, 52.0)
-                                              .padding(.bottom, 8.0)
-                                          VStack (alignment: .center){
-                                              Spacer()
-                                            
-                                              Ellipse()
-                                                  
-                                                                                          .fill(Color.black.opacity(0.4)) .frame(height: 21)
-                                                                                          .frame(width: 17)
-                                                  .padding(.bottom, 2.0)
-                                          
-                                        
-                                      }
+            VStack {
 
-                                          .frame(height: 35)
-                                          .frame(width: 70)
-                                      .border(Color.black.opacity(0.2), width: 3)
-                                                        .cornerRadius(2)
-                                    Text("Money")                .foregroundColor(.black)                  .padding(.bottom, 20.0)
+                HStack {
+                    Button(action: {
+                        self.myMoney = self.myMoney + 1.0
+                        print(self.myMoney)
+                    }) {
+                        VStack(alignment: .trailing) {
+                            ZStack {
+                                Ellipse()
+                                    .fill(Color.black.opacity(0.4)) .frame(height: 15)
+                                    .frame(width: 11)
+                                    .padding(.trailing, 51.0)
+                                    .padding(.bottom, 12.0)
+                                Text("1")
+                                    .foregroundColor(.white)
+                                    .font(.custom("Rockwell", size: 13))
+                                    .fontWeight(.heavy)
+                                    .italic()
+                                    .multilineTextAlignment(.leading)
+                                    .padding(.trailing, 52.0)
+                                    .padding(.bottom, 8.0)
+                                VStack (alignment: .center) {
+                                    Spacer()
 
-                                                                  .font(.custom("Rockwell", size: 10))
-                                                                  .padding(.top, 0)
-                                      Text("$").foregroundColor(.white)
-                                          .font(.system(size: 15))
-                                          .padding(.top, 9.0)
-                                                          }
-                                                          .frame(height: 15)
-                                  }
-                                      
+                                    Ellipse()
 
-                                      .frame(height: 40)
-                                      .frame(width: 75)
-                                      .background(Color(red: 238 / 255, green: 233 / 255, blue: 171 / 255))
-                                      .border(Color.black.opacity(0.2), width: 1)
-                                      .cornerRadius(2)
+                                        .fill(Color.black.opacity(0.4)) .frame(height: 21)
+                                        .frame(width: 17)
+                                        .padding(.bottom, 2.0)
+
+
+                                }
+
+                                    .frame(height: 35)
+                                    .frame(width: 70)
+                                    .border(Color.black.opacity(0.2), width: 3)
+                                    .cornerRadius(2)
+                                Text("Money") .foregroundColor(.black) .padding(.bottom, 20.0)
+
+                                    .font(.custom("Rockwell", size: 10))
+                                    .padding(.top, 0)
+                                Text("$").foregroundColor(.white)
+                                    .font(.system(size: 15))
+                                    .padding(.top, 9.0)
+                            }
+                                .frame(height: 15)
+                        }
+
+
+                            .frame(height: 40)
+                            .frame(width: 75)
+                            .background(Color(red: 238 / 255, green: 233 / 255, blue: 171 / 255))
+                            .border(Color.black.opacity(0.2), width: 1)
+                            .cornerRadius(2)
+                    }
+
+                    Button(action: {
+                        self.myMoney = self.myMoney + 5.0
+                        print(self.myMoney)
+                    }) {
+                        VStack(alignment: .trailing) {
+                            ZStack {
+                                Ellipse()
+                                    .fill(Color.black.opacity(0.4)) .frame(height: 15)
+                                    .frame(width: 11)
+                                    .padding(.trailing, 51.0)
+                                    .padding(.bottom, 12.0)
+                                Text("5")
+                                    .foregroundColor(.white)
+                                    .font(.custom("Rockwell", size: 13))
+                                    .fontWeight(.heavy)
+                                    .italic()
+                                    .multilineTextAlignment(.leading)
+                                    .padding(.trailing, 52.0)
+                                    .padding(.bottom, 8.0)
+                                VStack (alignment: .center) {
+                                    Spacer()
+
+                                    Ellipse()
+
+                                        .fill(Color.black.opacity(0.4)) .frame(height: 21)
+                                        .frame(width: 17)
+                                        .padding(.bottom, 2.0)
+
+
+                                }
+
+                                    .frame(height: 35)
+                                    .frame(width: 70)
+                                    .border(Color.black.opacity(0.2), width: 3)
+                                    .cornerRadius(2)
+                                Text("Money") .foregroundColor(.black) .padding(.bottom, 20.0)
+
+                                    .font(.custom("Rockwell", size: 10))
+                                    .padding(.top, 0)
+                                Text("$").foregroundColor(.white)
+                                    .font(.system(size: 15))
+                                    .padding(.top, 9.0)
+                            }
+                                .frame(height: 15)
+                        }
+
+
+                            .frame(height: 40)
+                            .frame(width: 75)
+                            .background(Color(red: 238 / 255, green: 233 / 255, blue: 171 / 255))
+                            .border(Color.black.opacity(0.2), width: 1)
+                            .cornerRadius(2)
+                    }
                 }
-        
-                Button(action: {
-                    self.myMoney = self.myMoney + 5.0
-                    print(self.myMoney)
-                }) {
-                     VStack(alignment: .trailing) {
-                                                         ZStack{
-                                                             Ellipse()
-                                                                                                        .fill(Color.black.opacity(0.4)) .frame(height: 15)
-                                                                                                        .frame(width: 11)
-                                                             .padding(.trailing, 51.0)
-                                                                                       .padding(.bottom, 12.0)
-                                                             Text("5")
-                                                                 .foregroundColor(.white)
-                                                                  .font(.custom("Rockwell", size: 13))
-                                                                 .fontWeight(.heavy)
-                                                                                                  .italic()
-                                                                 .multilineTextAlignment(.leading)
-                                                                 .padding(.trailing, 52.0)
-                                                                 .padding(.bottom, 8.0)
-                                                             VStack (alignment: .center){
-                                                                 Spacer()
-                                                               
-                                                                 Ellipse()
-                                                                     
-                                                                                                             .fill(Color.black.opacity(0.4)) .frame(height: 21)
-                                                                                                             .frame(width: 17)
-                                                                     .padding(.bottom, 2.0)
-                                                             
-                                                           
-                                                         }
-
-                                                             .frame(height: 35)
-                                                             .frame(width: 70)
-                                                         .border(Color.black.opacity(0.2), width: 3)
-                                                                           .cornerRadius(2)
-                                                       Text("Money")                .foregroundColor(.black)                  .padding(.bottom, 20.0)
-
-                                                                                     .font(.custom("Rockwell", size: 10))
-                                                                                     .padding(.top, 0)
-                                                         Text("$").foregroundColor(.white)
-                                                             .font(.system(size: 15))
-                                                             .padding(.top, 9.0)
-                                                                             }
-                                                                             .frame(height: 15)
-                                                     }
-                                                         
-
-                                                         .frame(height: 40)
-                                                         .frame(width: 75)
-                                                         .background(Color(red: 238 / 255, green: 233 / 255, blue: 171 / 255))
-                                                         .border(Color.black.opacity(0.2), width: 1)
-                                                         .cornerRadius(2)
-                }
+           
             }
         }
 
