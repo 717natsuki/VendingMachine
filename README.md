@@ -4,3 +4,6 @@ This Swift playground is called “Disaster Rescue Vending Machine”. This vend
 
 <img src="gif.gif" width="290"  />
 
+
+
+
